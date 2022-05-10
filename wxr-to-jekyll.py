@@ -13,6 +13,7 @@ for post in posts:
   title_text_parts = [part.strip() for part in title_text.split(":", 2)]
   date = post.wp_post_date.cdata.split(" ")[0]
   content = post.content_encoded.cdata
+  categories = [cat.cdata for cat in post.category]
 
   if len(title_text_parts) > 1:
     title_text = title_text_parts[1]
@@ -23,7 +24,13 @@ for post in posts:
   preamble = f"""---
 layout: post
 title: "{title_text}"
----"""
+category:
+"""
+
+  for cat in categories:
+    preamble += f"- \"{cat}\"\n"
+
+  preamble += "---"
   
   with open(fn, "w") as outfile:
     outfile.write(preamble)
